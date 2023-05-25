@@ -3,30 +3,41 @@
         {
             "id": "1",
             "jenis": "Wisata Budaya",
+            "gambar": "assets/image/tempatWisata/tembakau.png",
             "nama": "Museum Tembakau",
             "alamat": "Jl. Kalimantan No. 1, Jember",
-            "deskripsi": "Museum tembakau adalah salah satu wujud identitas Jember sebagai kota tembakau. Pengunjung bisa melihat berbagai literatur tembakau, miniatur gardu atak (tempat pengeringan tembakau), serta display daun tembakau dari berbagai jenis dan kualitas. Di museum tembakau ini juga bisa melihat tayangan diversifikasi produk tembakau yang belum banyak diketahui masyarakat luas. "
+            "deskripsi": "Museum tembakau adalah salah satu wujud identitas Jember sebagai kota tembakau. Pengunjung bisa melihat berbagai literatur tembakau, miniatur gardu atak (tempat pengeringan tembakau), serta display daun tembakau dari berbagai jenis dan kualitas. Di museum tembakau ini juga bisa melihat tayangan diversifikasi produk tembakau yang belum banyak diketahui masyarakat luas. ",
+            "route": "/halaman1"
         },
         {
             "id": "2",
             "jenis": "Wisata Budaya",
             "nama": "Rumah Budaya Pendalungan",
+            "gambar": "assets/image/tempatWisata/Pendalungan.jpeg",
             "alamat": "Jl. Pancakarya, Ajung",
             "deskripsi": "Rumah Budaya Pendalungan merupakan wujud semangat dari seniman Jember yang tergabung dalam komunitas Pandalungan untuk melestarikan dan mengembangkan seni budaya di kabupaten Jember. Berlokasi sekitar 5 km dari pusat kota Jember. Jember adalah kota kreatif, di rumah mewadahi siapapun yang memiliki tekad kuat untuk maju bersama agar seniman budaya Jember dapat lebih dikenal dan lestari. Di tempat ini memiliki panggung terbuka untuk penampilan seni di saat menyambut tamu dan pada acara-acara khusus. "
+            ,
+            "route": "/halaman2"
         },
         {
             "id": "3",
             "jenis": "Wisata Alam",
             "nama": "Pantai Pancer",
+            "gambar": "assets/image/tempatWisata/Pancer.jpg",
             "alamat": "Ds. Puger Kulon, Kec. Puger",
             "deskripsi": "Berjarak sekitar 41 km dari pusat kota Jember, disana akan dimanjakan dengan pemandangan layaknya pemandangan di daerah administratif, pemandangan gunung kapur dan jejeran perahu nelayan yang sedang bertengger. Ciri khas dari pantai ini adalah adanya batu-batu berjejer yang berfungsi sebagai pemecah ombak laut.  "
+            ,
+            "route": "/halaman3"
         },
         {
             "id": "4",
             "jenis": "Wisata Alam",
             "nama": "Pantai Bandealit",
+            "gambar": "assets/image/tempatWisata/Bandealit.jpg",
             "alamat": "Ds. Andongrejo, Kec. Tempurejo",
             "deskripsi": "Pantai ini berada di dalam kawasan Taman Nasional Meru Betiri (TNMB) dengan panorama laut yang sangat indah dengan bentang pantai sepanjang 1 km lebih. Perpaduan suasana pantai, laut, perkebunan, dan hutan tropis ini menyajikan suasana alam yang eksotis. Lokasinya berada di sebelah selatan kota Jember tepatnya 35 km dari pusat kota."
+            ,
+            "route": "/halaman4"
         }
     ]
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
-
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_application_jembis/Pages/detailTempat.dart';
 
 class homePage extends StatefulWidget {
   const homePage({super.key});
@@ -27,66 +27,70 @@ class _homePageState extends State<homePage> {
   @override
   void initState() {
     super.initState();
-    // Call the readJson method when the app starts
     readJson();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Center(child: Text("Jember Keren")),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      body: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: ListView(
             children: <Widget>[
-              Text("Selamat Datang, Arif!",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic)),
-              Text(
-                  "Aplikasi kami membantu Anda menemukan informasi lengkap tentang berbagai destinasi wisata menarik di Jember."),
               Container(
-                margin: EdgeInsets.only(top: 7, bottom: 7),
-                child: searchTempat(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Welcome to ",
+                    style: TextStyle(fontSize: 28),
+                  ),
+                  Image(
+                    image: AssetImage('assets/image/logo.png'),
+                    width: 275,
+                  ),
+                  Text(
+                      "Aplikasi kami membantu Anda menemukan informasi lengkap tentang berbagai destinasi wisata menarik di Jember."),
+                  Container(
+                    margin: EdgeInsets.only(top: 7, bottom: 7),
+                    child: searchTempat(),
+                  ),
+                  Text(
+                    "Rekomendasi Tempat",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  rekomendasiTempat(tempat: _tempat),
+                  Text(
+                    "Semua Tempat",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  cardTempat(tempat: _tempat),
+                ],
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(right: 7),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    menuButtonWisata('Semua'),
-                    menuButtonWisata('Budaya'),
-                    menuButtonWisata('Sejarah'),
-                    menuButtonWisata('Alam'),
-                    menuButtonWisata('Fesitaval'),
-                    menuButtonWisata('Religi'),
-                  ],
-                ),
-              ),
-              Text("Rekomendasi Tempat", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-              cardTempat(tempat: _tempat)
+            ),
             ],
+          )
+          // child: ListView(
+          //   shrinkWrap: true,  physics: ClampingScrollPhysics(),
+          //   scrollDirection: Axis.vertical,
+          //   children: <Widget>[
+
+          //   ],
           ),
-        ),
     );
   }
 }
 
 Container menuButtonWisata(String text) {
-    return Container(
-      width: 90,
-      margin: EdgeInsets.only(right: 7),
-      child: ElevatedButton(
-        child: Text(text),
-        onPressed: () {}, // <-- Text
-      ),
-    );
-  }
+  return Container(
+    width: 90,
+    margin: EdgeInsets.only(right: 7),
+    child: ElevatedButton(
+      child: Text(text),
+      onPressed: () {}, // <-- Text
+    ),
+  );
+}
 
 class searchTempat extends StatelessWidget {
   const searchTempat({
@@ -103,8 +107,7 @@ class searchTempat extends StatelessWidget {
           prefixIcon: Icon(Icons.search),
           contentPadding: EdgeInsets.symmetric(vertical: 7),
           border: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.all(Radius.circular(11.0)))),
+              borderRadius: BorderRadius.all(Radius.circular(11.0)))),
       style: TextStyle(fontSize: 15),
     );
   }
@@ -121,7 +124,7 @@ class cardTempat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100.0*_tempat.length,
+      height: 200,
       child: Column(
         children: [
           _tempat.isNotEmpty
@@ -135,7 +138,12 @@ class cardTempat extends StatelessWidget {
                       key: ValueKey(_tempat[index]["id"]),
                       margin: EdgeInsets.only(bottom: 10),
                       child: ListTile(
-                        leading: Text(_tempat[index]["id"]),
+                        leading: Card(
+                          child: Image.asset(
+                            _tempat[index]["gambar"],
+                            height: 200,
+                          ),
+                        ),
                         title: Text(_tempat[index]["nama"]),
                         subtitle: Text(_tempat[index]["alamat"]),
                       ),
@@ -144,6 +152,82 @@ class cardTempat extends StatelessWidget {
                 ))
               : Container()
         ],
+      ),
+    );
+  }
+}
+
+class rekomendasiTempat extends StatelessWidget {
+  const rekomendasiTempat({
+    super.key,
+    required List tempat,
+  }) : _tempat = tempat;
+
+  final List _tempat;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 250,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _tempat.length,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.fromLTRB(0, 2, 2, 0),
+            width: 175,
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Image.asset(
+                    _tempat[index]["gambar"],
+                    height: 125,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return DetailTempat();
+                            }));
+                          },
+                          child: Text(
+                            _tempat[index]["nama"],
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ),
+                        Container(height: 10,),
+                        Text(
+                          _tempat[index]["alamat"],
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Add a small space between the card and the next widget
+                  Container(height: 5),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
