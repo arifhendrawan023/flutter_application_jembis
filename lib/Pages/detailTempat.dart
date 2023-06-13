@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_jembis/services/firebase_service.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -23,7 +24,7 @@ class DetailTempat extends StatefulWidget {
 class _DetailTempatState extends State<DetailTempat> {
   int jumlahSuka = 0;
   List<String> likedPlaceIds = [];
-  bool isLiked = false; // Track if the place is liked
+  bool isLiked = false;
 
   String comment = '';
   File? imageFile;
@@ -37,9 +38,8 @@ class _DetailTempatState extends State<DetailTempat> {
   void initState() {
     super.initState();
     initializeDateFormatting('id_ID', null);
-    fetchLikedPlaceIds(); // Fetch liked place IDs when the widget initializes
-    jumlahSuka = widget.place['jumlahSuka'] ??
-        0; // Initialize like count from the place data
+    fetchLikedPlaceIds();
+    jumlahSuka = widget.place['jumlahSuka'] ?? 0;
   }
 
   @override
@@ -90,8 +90,8 @@ class _DetailTempatState extends State<DetailTempat> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => LihatMapPage(
-                                koordinatTempat: koordinatTempat, namaTempat: namaTempat
-                              ),
+                                  koordinatTempat: koordinatTempat,
+                                  namaTempat: namaTempat),
                             ),
                           );
                         },
@@ -115,17 +115,15 @@ class _DetailTempatState extends State<DetailTempat> {
                     onTap: () {
                       setState(() {
                         if (isLiked) {
-                          // Decrease like count and remove the place ID
                           jumlahSuka--;
                           likedPlaceIds.remove(widget.place.id);
                           updateLikedPlaces();
                         } else {
-                          // Increase like count and add the place ID
                           jumlahSuka++;
                           likedPlaceIds.add(widget.place.id);
                           updateLikedPlaces();
                         }
-                        isLiked = !isLiked; // Toggle the like status
+                        isLiked = !isLiked;
                       });
                       FirebaseService.tempatWisata.doc(widget.place.id).update({
                         "jumlahSuka": jumlahSuka,
@@ -167,21 +165,71 @@ class _DetailTempatState extends State<DetailTempat> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(
-                                0), // Ubah nilai padding sesuai kebutuhan
+                            padding: const EdgeInsets.all(0),
                             child: IconButton(
-                              onPressed: () {
-                                getImage(ImageSource.gallery);
+                              onPressed: () async {
+                                var status = await Permission.storage.request();
+                                if (status.isGranted) {
+                                  getImage(ImageSource.gallery);
+                                } else if (status.isDenied ||
+                                    status.isPermanentlyDenied) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text("Izin Dibutuhkan"),
+                                      content: const Text(
+                                        "Aplikasi memerlukan izin akses penyimpanan untuk mengunggah foto dari perangkat Anda.",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text("Tutup"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => openAppSettings(),
+                                          child: const Text("Buka Pengaturan"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
                               },
                               icon: const Icon(Icons.photo_library),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(
-                                0), // Ubah nilai padding sesuai kebutuhan
+                            padding: const EdgeInsets.all(0),
                             child: IconButton(
-                              onPressed: () {
-                                getImage(ImageSource.camera);
+                              onPressed: () async {
+                                var status = await Permission.camera.request();
+                                if (status.isGranted) {
+                                  getImage(ImageSource.camera);
+                                } else if (status.isDenied ||
+                                    status.isPermanentlyDenied) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text("Izin Dibutuhkan"),
+                                      content: const Text(
+                                        "Aplikasi memerlukan izin akses ke kamera untuk melanjutkan.",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text("Tutup"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => openAppSettings(),
+                                          child: const Text("Buka Pengaturan"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
                               },
                               icon: const Icon(Icons.camera_alt),
                             ),
@@ -239,8 +287,8 @@ class _DetailTempatState extends State<DetailTempat> {
                               commentTimestamp = Timestamp.now();
                             }
 
-                            final displayName = commentDisplayName ??
-                                'Unknown User'; // Provide a fallback value
+                            final displayName =
+                                commentDisplayName ?? 'Unknown User';
 
                             final formattedTimestamp =
                                 DateFormat('EEEE, d MMMM y, HH:mm', 'id_ID')
@@ -277,6 +325,30 @@ class _DetailTempatState extends State<DetailTempat> {
                                         fontSize: 12,
                                         color: Colors.grey,
                                       ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        if (comment['userId'] ==
+                                            FirebaseAuth
+                                                .instance.currentUser?.uid)
+                                          IconButton(
+                                            onPressed: () {
+                                              editComment(comment);
+                                            },
+                                            icon: const Icon(Icons.edit),
+                                          ),
+                                        if (comment['userId'] ==
+                                            FirebaseAuth
+                                                .instance.currentUser?.uid)
+                                          IconButton(
+                                            onPressed: () {
+                                              deleteComment(comment);
+                                            },
+                                            icon: const Icon(Icons.delete),
+                                          ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -327,8 +399,7 @@ class _DetailTempatState extends State<DetailTempat> {
       final List<dynamic> likedPlaces = data['likedPlaces'];
       setState(() {
         likedPlaceIds.addAll(likedPlaces.cast<String>());
-        isLiked = likedPlaceIds
-            .contains(widget.place.id); // Check if the place is liked
+        isLiked = likedPlaceIds.contains(widget.place.id);
       });
     }
   }
@@ -339,13 +410,10 @@ class _DetailTempatState extends State<DetailTempat> {
 
     final usersCollection = FirebaseFirestore.instance.collection('users');
 
-    // Check if the user document exists
     final userDoc = await usersCollection.doc(userId).get();
     if (userDoc.exists) {
-      // User document exists, update the likedPlaces field
       await usersCollection.doc(userId).update({'likedPlaces': likedPlaceIds});
     } else {
-      // User document doesn't exist, create a new document and set the likedPlaces field
       await usersCollection.doc(userId).set({'likedPlaces': likedPlaceIds});
     }
   }
@@ -359,21 +427,92 @@ class _DetailTempatState extends State<DetailTempat> {
     }
   }
 
+  void showPermissionDeniedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Izin Ditolak'),
+          content: const Text('Izin ini diperlukan untuk mengakses galeri.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showPermissionPermanentlyDeniedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Izin Ditolak Secara Permanen'),
+          content: const Text(
+              'Anda telah secara permanen menolak izin ini. Silakan aktifkan izin di pengaturan aplikasi.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showCameraPermissionDeniedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Izin Kamera Ditolak'),
+          content: const Text('Izin ini diperlukan untuk menggunakan kamera.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showCameraPermissionPermanentlyDeniedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Izin Kamera Ditolak Secara Permanen'),
+          content: const Text(
+              'Anda telah secara permanen menolak izin kamera. Silakan aktifkan izin kamera di pengaturan aplikasi.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void submitComment() async {
     if (comment.isEmpty) {
-      // Show an error message or perform appropriate validation
       return;
     }
 
     String? imageUrl;
 
-    // Get the user ID and display name
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("id") ?? "";
     final currentUser = FirebaseAuth.instance.currentUser;
     final displayName = currentUser?.displayName ?? '';
 
-    // Upload the image file to Firebase Cloud Storage and get the download URL
     if (imageFile != null) {
       final storageRef = firebase_storage.FirebaseStorage.instance
           .ref()
@@ -385,24 +524,108 @@ class _DetailTempatState extends State<DetailTempat> {
       imageUrl = await snapshot.ref.getDownloadURL();
     }
 
-    // Save the comment, image URL, user ID, display name, and timestamp to the Firestore database
     final commentData = {
       'text': comment,
       'image': imageUrl,
       'userId': userId,
-      'displayName': displayName, // Add the display name to the comment data
-      'timestamp':
-          FieldValue.serverTimestamp(), // Add the current server timestamp
+      'displayName': displayName,
+      'timestamp': FieldValue.serverTimestamp(),
     };
     await FirebaseService.tempatWisata
         .doc(widget.place.id)
         .collection('comments')
         .add(commentData);
 
-    // Clear the comment and image selection
     setState(() {
       comment = '';
       imageFile = null;
     });
+  }
+
+  void editComment(DocumentSnapshot comment) async {
+    final currentText = comment['text'] ?? '';
+    final commentUserId = comment['userId'] ?? '';
+
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUserId = currentUser?.uid ?? '';
+
+    if (commentUserId != currentUserId) {
+      return;
+    }
+
+    await showDialog<String>(
+      context: context,
+      builder: (context) {
+        String newText = currentText;
+        return AlertDialog(
+          title: const Text('Edit Comment'),
+          content: TextField(
+            onChanged: (value) {
+              newText = value;
+            },
+            controller: TextEditingController(text: currentText),
+            decoration: const InputDecoration(hintText: 'Enter comment'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(newText);
+
+                final commentRef = FirebaseService.tempatWisata
+                    .doc(widget.place.id)
+                    .collection('comments')
+                    .doc(comment.id);
+
+                final updatedData = {
+                  'text': newText,
+                };
+
+                await commentRef.update(updatedData);
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteComment(DocumentSnapshot comment) {
+    final commentUserId = comment['userId'] ?? '';
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUserId = currentUser?.uid ?? '';
+
+    if (commentUserId != currentUserId) {
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Comment'),
+        content: const Text('Are you sure you want to delete this comment?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Delete the comment from Firestore
+              FirebaseService.tempatWisata
+                  .doc(widget.place.id)
+                  .collection('comments')
+                  .doc(comment.id)
+                  .delete();
+
+              Navigator.pop(context); // Close the dialog
+            },
+            child: const Text('Delete'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
   }
 }

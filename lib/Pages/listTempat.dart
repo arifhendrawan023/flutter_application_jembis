@@ -167,69 +167,72 @@ class _ListTempatState extends State<ListTempat> {
   }
 
   Future<Widget> buildTempatTile(DocumentSnapshot place) async {
-    final namaTempat = place["namaTempat"];
-    final gambar1 = await _getImageUrl(place["gambar1"]);
+  final namaTempat = place["namaTempat"];
+  final gambar1 = await _getImageUrl(place["gambar1"]);
 
-    return SizedBox(// Adjust the height as needed
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailTempat(place: place),
-            ),
-          );
-        },
-        child: Card(
-          margin: const EdgeInsets.fromLTRB(4, 5, 4, 5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(7),
+  return SizedBox(
+    child: GestureDetector(
+      onTap: () async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailTempat(place: place),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(7),
-                  topRight: Radius.circular(7),
-                ),
-                child: Image.network(
-                  gambar1,
-                  height: 110,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.fromLTRB(4, 5, 4, 5),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(7),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(7),
+                topRight: Radius.circular(7),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(7, 10, 7, 7),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 45, // Adjust the height as needed
-                      child: Text(
-                        namaTempat,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.grey[800],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+              child: Image.network(
+                gambar1,
+                height: 110,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(7, 10, 7, 7),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 45,
+                    child: Text(
+                      namaTempat,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.grey[800],
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Future<String> _getImageUrl(String imageUrl) async {
+Future<String> _getImageUrl(String imageUrl) async {
+  // Simulating an asynchronous delay
+  await Future.delayed(const Duration(seconds: 2));
+  
+  return imageUrl;
+}
 
-    return imageUrl;
-  }
 }

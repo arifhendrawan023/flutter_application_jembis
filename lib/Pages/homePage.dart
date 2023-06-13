@@ -38,15 +38,12 @@ class _homePageState extends State<homePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 25),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(0, 75, 0, 0),
-                        child: const Text(""),
-                      ),
                       const Text(
                         "Hai,",
                         style: TextStyle(
@@ -301,10 +298,11 @@ class _homePageState extends State<homePage> {
   }
 
   Future<Widget> buildTempatTile(DocumentSnapshot place) async {
-    final namaTempat = place["namaTempat"];
-    final alamatTempat = place["alamatTempat"];
-    final gambar1 = place["gambar1"];
+  final namaTempat = place["namaTempat"];
+  final alamatTempat = place["alamatTempat"];
+  final gambar1 = place["gambar1"];
 
+  return await Future.delayed(const Duration(seconds: 1), () {
     return SizedBox(
       width: 200,
       height: 225,
@@ -375,11 +373,13 @@ class _homePageState extends State<homePage> {
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
       ),
     );
-  }
+  });
+}
+
 }

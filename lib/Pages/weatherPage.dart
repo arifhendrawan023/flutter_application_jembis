@@ -81,6 +81,7 @@ class WeatherData {
 class WeatherPage extends StatefulWidget {
   const WeatherPage({Key? key}) : super(key: key);
 
+
   @override
   State<WeatherPage> createState() => _WeatherPageState();
 }
@@ -153,7 +154,8 @@ class _WeatherPageState extends State<WeatherPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perkiraan Cuaca Jember'),backgroundColor: Colors.orange,
+        title: const Text('Perkiraan Cuaca Jember'),
+        backgroundColor: Colors.orange,
       ),
       body: Center(
         child: FutureBuilder<List<WeatherData>>(
@@ -162,39 +164,28 @@ class _WeatherPageState extends State<WeatherPage> {
             if (snapshot.hasData) {
               final forecastDataList = snapshot.data!;
               return ListView.builder(
-                itemCount: forecastDataList.length +
-                    1, // Tambahkan 1 untuk card hari ini
+                itemCount: forecastDataList.length,
                 itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return const Text("");
-                  } else {
-                    final forecastData = forecastDataList[index - 1];
-                    return Card(
-                      child: ListTile(
-                        title: Text(forecastData.day),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Temperature: ${forecastData.temperature.toStringAsFixed(1)}°C',
-                            ),
-                            Text(
-                              'Tanggal: ${forecastData.date}/${forecastData.month}/${forecastData.year}',
-                            ),
-                            _buildWeatherDescriptionWidget(forecastData
-                                .weather.description), // Deskripsi cuaca
-                          ],
-                        ),
-                        leading: Image.network(
-                          'https://openweathermap.org/img/wn/${forecastData.weather.icon}.png',
-                          height: 40.0,
-                          width: 40.0,
-                        ),
-                        trailing: _buildWeatherConditionWidget(
-                            forecastData.weather.description),
+                  final forecastData = forecastDataList[index];
+                  return Card(
+                    child: ListTile(
+                      title: Text('${forecastData.day} ${forecastData.date}/${forecastData.month}/${forecastData.year}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Temperature: ${forecastData.temperature.toStringAsFixed(1)}°C',
+                          ),
+                          _buildWeatherDescriptionWidget(forecastData.weather.description),
+                        ],
                       ),
-                    );
-                  }
+                      leading: Image.network(
+                        'https://openweathermap.org/img/wn/${forecastData.weather.icon}.png',
+                        height: 40.0,
+                        width: 40.0,
+                      ),
+                    ),
+                  );
                 },
               );
             } else if (snapshot.hasError) {

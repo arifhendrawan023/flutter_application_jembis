@@ -62,7 +62,7 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: 'List Tempat',
+            label: 'List Place',
             backgroundColor: Colors.orange,
           ),
           BottomNavigationBarItem(
