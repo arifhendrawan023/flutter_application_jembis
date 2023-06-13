@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "472061330128",
+    "project_id": "jember-tourism",
+    "storage_bucket": "jember-tourism.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472061330128:android:b8f0027d07a942334414d5",
+        "android_client_info": {
+          "package_name": "com.application_jembertourism"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472061330128-08nt40g8g48chp3chl3b538ofb9cukcn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.application_jembertourism",
+            "certificate_hash": "98ec124b50f455d270651064123cd955ce8de31e"
+          }
+        },
+        {
+          "client_id": "472061330128-5pvseqm3n75ses6u3at67t4vbqv4kmep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCISmUMZcwWcBWV-3W7cdYr9-6NW9V6MiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472061330128-5pvseqm3n75ses6u3at67t4vbqv4kmep.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472061330128:android:b3593fed043fe10d4414d5",
+        "android_client_info": {
+          "package_name": "com.application_jembis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472061330128-5pvseqm3n75ses6u3at67t4vbqv4kmep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCISmUMZcwWcBWV-3W7cdYr9-6NW9V6MiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472061330128-5pvseqm3n75ses6u3at67t4vbqv4kmep.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
