@@ -46,21 +46,14 @@ class _DetailTempatState extends State<DetailTempat> {
     fetchLikedPlaceIds();
     fetchSavedPlaceIds();
     jumlahSuka = widget.place['jumlahSuka'] ?? 0;
-    // try{
-    //   print("TRY ${widget.place['disimpan']}");
-    //   isSaved = widget.place['disimpan'] ?? false;
-    // } catch (e) {
-    //   print("FAILED BECAUSE ${e}");
-    //   isSaved = false;
-    // }
   }
 
   @override
   Widget build(BuildContext context) {
     namaTempat = widget.place["namaTempat"];
-     alamatTempat = widget.place["alamatTempat"];
-     deskripsiTempat = widget.place["deskripsiTempat"];
-     gambar1 = widget.place["gambar1"];
+    alamatTempat = widget.place["alamatTempat"];
+    deskripsiTempat = widget.place["deskripsiTempat"];
+    gambar1 = widget.place["gambar1"];
 
     return Scaffold(
       appBar: AppBar(
@@ -357,26 +350,24 @@ class _DetailTempatState extends State<DetailTempat> {
                                     ),
                                     const SizedBox(height: 8),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         if (comment['userId'] ==
                                             FirebaseAuth
                                                 .instance.currentUser?.uid)
-                                          IconButton(
-                                            onPressed: () {
-                                              editComment(comment);
-                                            },
-                                            icon: const Icon(Icons.edit),
-                                          ),
+                                          TextButton(
+                                              onPressed: () {
+                                                editComment(comment);
+                                              },
+                                              child: const Text('Edit')),
                                         if (comment['userId'] ==
                                             FirebaseAuth
                                                 .instance.currentUser?.uid)
-                                          IconButton(
-                                            onPressed: () {
-                                              deleteComment(comment);
-                                            },
-                                            icon: const Icon(Icons.delete),
-                                          ),
+                                          TextButton(
+                                              onPressed: () {
+                                                deleteComment(comment);
+                                              },
+                                              child: const Text('Hapus'))
                                       ],
                                     ),
                                   ],
@@ -405,7 +396,7 @@ class _DetailTempatState extends State<DetailTempat> {
               likedPlaceIds.add(widget.place.id);
               jumlahSuka++;
             }
-            isLiked = !isLiked; // Toggle the like status
+            isLiked = !isLiked; 
           });
           updateLikedPlaces();
           FirebaseService.tempatWisata.doc(widget.place.id).update({
@@ -437,19 +428,22 @@ class _DetailTempatState extends State<DetailTempat> {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("id") ?? "";
     print("PLACE ID: ${widget.place.id}");
-    final doc = await FirebaseFirestore.instance.collection('tempatWisataTersimpan').get();
+    final doc = await FirebaseFirestore.instance
+        .collection('tempatWisataTersimpan')
+        .get();
     final List<DocumentSnapshot> documents = doc.docs;
     for (var document in documents) {
       print("HERE");
       final String idUser = document['user_id'];
-      if (idUser.contains(userId) && document['place_id'] == widget.place.id){
+      if (idUser.contains(userId) && document['place_id'] == widget.place.id) {
         setState(() {
           isSaved = true;
         });
         return;
       }
       try {
-        if (idUser.contains(userId) && document['place_id'] == widget.place['place_id']){
+        if (idUser.contains(userId) &&
+            document['place_id'] == widget.place['place_id']) {
           setState(() {
             isSaved = true;
           });
@@ -613,7 +607,7 @@ class _DetailTempatState extends State<DetailTempat> {
       'user_id': userId
     };
 
-    if (isSaved){
+    if (isSaved) {
       String placeId = "";
       try {
         placeId = widget.place['place_id'];
@@ -660,13 +654,13 @@ class _DetailTempatState extends State<DetailTempat> {
       builder: (context) {
         String newText = currentText;
         return AlertDialog(
-          title: const Text('Edit Comment'),
+          title: const Text('Edit Komentar'),
           content: TextField(
             onChanged: (value) {
               newText = value;
             },
             controller: TextEditingController(text: currentText),
-            decoration: const InputDecoration(hintText: 'Enter comment'),
+            decoration: const InputDecoration(hintText: 'Masukkan komentar'),
           ),
           actions: [
             TextButton(
@@ -684,7 +678,7 @@ class _DetailTempatState extends State<DetailTempat> {
 
                 await commentRef.update(updatedData);
               },
-              child: const Text('Save'),
+              child: const Text('Simpan'),
             ),
           ],
         );
@@ -704,27 +698,26 @@ class _DetailTempatState extends State<DetailTempat> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Comment'),
-        content: const Text('Are you sure you want to delete this comment?'),
+        title: const Text('Hapus Komentar'),
+        content: const Text('Anda yakin ingin menghapus komentar ini?'),
         actions: [
           TextButton(
             onPressed: () {
-              // Delete the comment from Firestore
               FirebaseService.tempatWisata
                   .doc(widget.place.id)
                   .collection('comments')
                   .doc(comment.id)
                   .delete();
 
-              Navigator.pop(context); // Close the dialog
+              Navigator.pop(context); 
             },
-            child: const Text('Delete'),
+            child: const Text('Hapus'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context); // Close the dialog
+              Navigator.pop(context); 
             },
-            child: const Text('Cancel'),
+            child: const Text('Batal'),
           ),
         ],
       ),

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_jembis/Pages/detailTempat.dart';
-import 'package:flutter_application_jembis/Pages/aboutPage.dart';
 import 'package:flutter_application_jembis/services/firebase_service.dart';
 
 class homePage extends StatefulWidget {
@@ -13,7 +12,7 @@ class homePage extends StatefulWidget {
     Key? key,
     required this.displayName,
     required this.photoURL,
-    required this.email,
+    required this.email, required Null Function() onProfileClicked,
   }) : super(key: key);
 
   @override
@@ -60,17 +59,9 @@ class _homePageState extends State<homePage> {
                       ),
                     ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return AboutPage(photoURL: widget.photoURL, displayName: widget.displayName, email: widget.email,);
-                      }));
-                    },
-                    child: CircleAvatar(
+                  CircleAvatar(
                       backgroundImage: NetworkImage(widget.photoURL),
                     ),
-                  ),
                 ],
               ),
               Container(
