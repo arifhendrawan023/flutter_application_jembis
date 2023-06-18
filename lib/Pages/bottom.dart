@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_jembis/Pages/aboutPage.dart';
 import 'package:flutter_application_jembis/Pages/homePage.dart';
 import 'package:flutter_application_jembis/Pages/listTempat.dart';
+import 'package:flutter_application_jembis/Pages/savedPlacePage.dart';
 import 'package:flutter_application_jembis/Pages/weatherPage.dart';
 
 class MyBottomNavBar extends StatefulWidget {
@@ -38,16 +39,17 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
-      homePage(photoURL: widget.photoURL, displayName: widget.displayName, email: widget.email),
+      homePage(photoURL: widget.photoURL, displayName: widget.displayName, email: widget.email, onProfileClicked: (){
+        _onItemTapped(3);
+      },),
       const WeatherPage(),
       const ListTempat(),
+      const SavedPlacePage(),
       AboutPage(photoURL: widget.photoURL, displayName: widget.photoURL, email: widget.email,),
     ];
 
     return Scaffold(
-      body: Center(
-        child: widgetOptions.elementAt(_selectedIndex),
-      ),
+      body: widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -63,6 +65,11 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'List Place',
+            backgroundColor: Colors.orange,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark),
+            label: 'Saved',
             backgroundColor: Colors.orange,
           ),
           BottomNavigationBarItem(
