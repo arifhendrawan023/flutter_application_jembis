@@ -32,6 +32,7 @@ class WeatherData {
   final int date;
   final int month;
   final int year;
+  final DateTime dateTime;
 
   WeatherData({
     required this.weather,
@@ -40,6 +41,7 @@ class WeatherData {
     required this.date,
     required this.month,
     required this.year,
+    required this.dateTime,
   });
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
@@ -53,6 +55,7 @@ class WeatherData {
       date: dateTime.day,
       month: dateTime.month,
       year: dateTime.year,
+      dateTime: dateTime,
     );
   }
 
@@ -81,7 +84,6 @@ class WeatherData {
 class WeatherPage extends StatefulWidget {
   const WeatherPage({Key? key}) : super(key: key);
 
-
   @override
   State<WeatherPage> createState() => _WeatherPageState();
 }
@@ -103,40 +105,49 @@ class _WeatherPageState extends State<WeatherPage> {
         return WeatherData.fromJson(json);
       }).toList();
 
-      // Filter data cuaca untuk menampilkan hanya satu entri per hari
-      final filteredDataList = <WeatherData>[];
-      var previousDay = '';
-      for (final forecastData in forecastDataList) {
-        if (forecastData.day != previousDay) {
-          filteredDataList.add(forecastData);
-          previousDay = forecastData.day;
-        }
-      }
-
-      return filteredDataList;
+      return forecastDataList;
     } else {
       throw Exception('Gagal mengambil perkiraan cuaca');
     }
   }
 
-  Widget _buildWeatherConditionWidget(String description) {
-    if (description.contains('hujan')) {
-      return const Icon(Icons.beach_access);
-    } else if (description.contains('berawan')) {
-      return const Icon(Icons.cloud);
-    } else {
-      return const Icon(Icons.wb_sunny);
-    }
+  Widget _buildForecastCard(WeatherData forecastData) {
+    final time = TimeOfDay.fromDateTime(forecastData.dateTime).format(context);
+
+    return Card(
+      child: ListTile(
+        title: Text(
+          '${forecastData.date}/${forecastData.month}/${forecastData.year}',
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Time: $time',
+            ),
+            Text(
+              'Temperature: ${forecastData.temperature.toStringAsFixed(1)}°C',
+            ),
+            _buildWeatherDescriptionWidget(forecastData.weather.description),
+          ],
+        ),
+        leading: Image.network(
+          'https://openweathermap.org/img/wn/${forecastData.weather.icon}.png',
+          height: 40.0,
+          width: 40.0,
+        ),
+      ),
+    );
   }
 
   Widget _buildWeatherDescriptionWidget(String description) {
     switch (description) {
       case 'broken clouds':
-        return const Text('Tertutup Awan');
+        return const Text('Tertutup Awan Pecah-Pecah');
       case 'few clouds':
-        return const Text('Sedikit Berawan');
+        return const Text('Awan Sedikit');
       case 'scattered clouds':
-        return const Text('Cerah Berawan');
+        return const Text('Awan Tersebar');
       case 'light rain':
         return const Text('Hujan Ringan');
       case 'moderate rain':
@@ -167,25 +178,24 @@ class _WeatherPageState extends State<WeatherPage> {
                 itemCount: forecastDataList.length,
                 itemBuilder: (context, index) {
                   final forecastData = forecastDataList[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text('${forecastData.day} ${forecastData.date}/${forecastData.month}/${forecastData.year}'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Temperature: ${forecastData.temperature.toStringAsFixed(1)}°C',
-                          ),
-                          _buildWeatherDescriptionWidget(forecastData.weather.description),
-                        ],
-                      ),
-                      leading: Image.network(
-                        'https://openweathermap.org/img/wn/${forecastData.weather.icon}.png',
-                        height: 40.0,
-                        width: 40.0,
-                      ),
-                    ),
-                  );
+
+                  final isFirstForecast = index == 0;
+                  final isDayChanged =
+                      !isFirstForecast &&
+                          forecastData.day != forecastDataList[index - 1].day;
+
+                  if (isFirstForecast || isDayChanged) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(forecastData.day),
+                        ),
+                        _buildForecastCard(forecastData),
+                      ],
+                    );
+                  }
+
+                  return _buildForecastCard(forecastData);
                 },
               );
             } else if (snapshot.hasError) {
