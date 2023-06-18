@@ -8,5 +8,5 @@ class FirebaseService {
   static final tempatWisata = _firestore.collection("tempatWisata");
   static final comments = _firestore.collection("comments");
   static final users = _firestore.collection("users");
-  
+  static final savedTempatWisata = _firestore.collection("tempatWisataTersimpan");
 }
